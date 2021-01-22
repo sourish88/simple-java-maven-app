@@ -35,7 +35,7 @@ pipeline {
 
         // Build and Publish Image
         stage('Publish') {
-            agent none
+            agent any
             steps {
                 sh '''
                     pwd
