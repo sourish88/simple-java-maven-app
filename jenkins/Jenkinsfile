@@ -56,10 +56,23 @@ pipeline {
         stage('Publish') {
             steps {
                 script {
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+                    dockerImage = docker.build registry + ":1.0.$BUILD_NUMBER" 
                     docker.withRegistry( '', registryCredential ) { 
                         dockerImage.push() 
                     }
+                }
+            }            
+        }
+
+        // Trigger deployment
+        stage('Deploy') {
+            steps {
+                script {
+                    build job:'Pipeline/DeploySpinnakerPipeline' , parameters:[
+                     string(name: "APP_NAME",  value: "sampleJavaApp"),
+                     string(name: "DOCKER_REPO", value: registry),
+                     string(name: "VERSION_TAG",  value: "1.0.$BUILD_NUMBER")
+                   ]
                 }
             }            
         }
