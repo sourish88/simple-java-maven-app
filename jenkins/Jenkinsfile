@@ -50,14 +50,6 @@ pipeline {
 
         // Build and Publish Image
         stage('Publish') {
-            agent {
-                docker{
-                    image 'docker:dind'
-                    args '--env DOCKER_TLS_CERTDIR=/certs \
-                          --volume jenkins-docker-certs:/certs/client \
-                          --volume jenkins-data:/var/jenkins_home'
-                }
-            }
             steps {
                 sh '''
                     pwd
