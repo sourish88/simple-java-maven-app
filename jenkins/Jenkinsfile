@@ -3,18 +3,19 @@ pipeline {
         registry = 'sourish88/sample-java-app'
         registryCredential = 'DockerHub-Creds'
     }
-    agent any
+    agent {
+        label master
+    }
     stages {
-        // Docker agent for build
+        // Build stage
+        stage('Build') {
+            // Docker agent for build
             agent {
                 docker {
                     image 'maven:3-alpine'
                     args '-v /root/.m2:/root/.m2'
                 }
             }
-
-        // Build stage
-        stage('Build') {
             steps {
                 sh 'mvn -B -DskipTests clean package'
             }
@@ -23,12 +24,12 @@ pipeline {
         //Test stage
         stage('Test') {
             // Docker agent for build
-            // agent {
-            //     docker {
-            //         image 'maven:3-alpine'
-            //         args '-v /root/.m2:/root/.m2'
-            //     }
-            // }
+            agent {
+                docker {
+                    image 'maven:3-alpine'
+                    args '-v /root/.m2:/root/.m2'
+                }
+            }
             steps {
                 sh 'mvn test'
             }
@@ -52,9 +53,7 @@ pipeline {
                 sh './jenkins/scripts/deliver.sh'
             }
         }
-    }
 
-    stages {
         // Build and Publish Image
         stage('Publish') {
             steps {
