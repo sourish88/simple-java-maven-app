@@ -38,6 +38,7 @@ pipeline {
             agent none
             steps {
                 sh '''
+                    pwd
                     docker build -t sourish88/${NAME}:1.0.${BUILD_NUMBER} .
                     docker push sourish88/${NAME}:1.0.${BUILD_NUMBER}
                     docker rmi sourish88/${NAME}:1.0.${BUILD_NUMBER}
