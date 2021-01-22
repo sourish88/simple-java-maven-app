@@ -12,7 +12,7 @@ pipeline {
                     args '-v /root/.m2:/root/.m2'
                 }
             }
-            
+
         // Build stage
         stage('Build') {
             steps {
@@ -23,12 +23,12 @@ pipeline {
         //Test stage
         stage('Test') {
             // Docker agent for build
-            agent {
-                docker {
-                    image 'maven:3-alpine'
-                    args '-v /root/.m2:/root/.m2'
-                }
-            }
+            // agent {
+            //     docker {
+            //         image 'maven:3-alpine'
+            //         args '-v /root/.m2:/root/.m2'
+            //     }
+            // }
             steps {
                 sh 'mvn test'
             }
@@ -52,7 +52,9 @@ pipeline {
                 sh './jenkins/scripts/deliver.sh'
             }
         }
+    }
 
+    stages {
         // Build and Publish Image
         stage('Publish') {
             steps {
