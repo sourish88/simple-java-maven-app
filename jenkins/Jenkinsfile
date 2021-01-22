@@ -32,5 +32,17 @@ pipeline {
                 sh './jenkins/scripts/deliver.sh'
             }
         }
+
+        // Build and Publish Image
+        stage('Publish') {
+            agent none
+            steps {
+                sh '''
+                    docker build -t sourish88/${NAME}:1.0.${BUILD_NUMBER} .
+                    docker push sourish88/${NAME}:1.0.${BUILD_NUMBER}
+                    docker rmi sourish88/${NAME}:1.0.${BUILD_NUMBER}
+                '''
+            }            
+        }
     }
 }
