@@ -1,14 +1,15 @@
 pipeline {
-    // Docker agent for build
-    agent {
-        docker {
-            image 'maven:3-alpine'
-            args '-v /root/.m2:/root/.m2'
-        }
-    }
+    agent none
     stages {
         // Build stage
         stage('Build') {
+            // Docker agent for build
+            agent {
+                docker {
+                    image 'maven:3-alpine'
+                    args '-v /root/.m2:/root/.m2'
+                }
+            }
             steps {
                 sh 'mvn -B -DskipTests clean package'
             }
@@ -16,6 +17,13 @@ pipeline {
 
         //Test stage
         stage('Test') {
+            // Docker agent for build
+            agent {
+                docker {
+                    image 'maven:3-alpine'
+                    args '-v /root/.m2:/root/.m2'
+                }
+            }
             steps {
                 sh 'mvn test'
             }
@@ -28,6 +36,13 @@ pipeline {
 
         // Deliver stage
         stage('Deliver') {
+            // Docker agent for build
+            agent {
+                docker {
+                    image 'maven:3-alpine'
+                    args '-v /root/.m2:/root/.m2'
+                }
+            }
             steps {
                 sh './jenkins/scripts/deliver.sh'
             }
@@ -36,12 +51,10 @@ pipeline {
         // Build and Publish Image
         stage('Publish') {
             agent {
-                // kubernetes {
-                // label 'slave-java'
                 docker{
                     image 'docker:dind'
-                } // end dockerfile 
-            } // end agent
+                }
+            }
             steps {
                 sh '''
                     pwd
