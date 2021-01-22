@@ -1,4 +1,8 @@
 pipeline {
+    environment {
+        registry = 'sourish88/sample-java-app'
+        registryCredential = 'DockerHub-Creds'
+    }
     agent any
     stages {
         // Build stage
