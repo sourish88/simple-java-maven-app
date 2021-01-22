@@ -58,9 +58,9 @@ pipeline {
             steps {
                 sh '''
                     pwd
-                    docker build -t sourish88/${NAME}:1.0.${BUILD_NUMBER} .
-                    docker push sourish88/${NAME}:1.0.${BUILD_NUMBER}
-                    docker rmi sourish88/${NAME}:1.0.${BUILD_NUMBER}
+                    docker build -t sourish88/${JOB_BASE_NAME}:1.0.${BUILD_NUMBER} .
+                    docker push sourish88/${JOB_BASE_NAME}:1.0.${BUILD_NUMBER}
+                    docker rmi sourish88/${JOB_BASE_NAME}:1.0.${BUILD_NUMBER}
                 '''
             }            
         }
