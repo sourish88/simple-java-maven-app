@@ -51,12 +51,12 @@ pipeline {
         // Build and Publish Image
         stage('Publish') {
             steps {
-                sh '''
-                    pwd
-                    docker build -t sourish88/${JOB_BASE_NAME}:1.0.${BUILD_NUMBER} .
-                    docker push sourish88/${JOB_BASE_NAME}:1.0.${BUILD_NUMBER}
-                    docker rmi sourish88/${JOB_BASE_NAME}:1.0.${BUILD_NUMBER}
-                '''
+                script {
+                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+                    docker.withRegistry( '', registryCredential ) { 
+                        dockerImage.push() 
+                    }
+                }
             }            
         }
     }
