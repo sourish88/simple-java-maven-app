@@ -3,9 +3,9 @@ pipeline {
         registry = 'sourish88/sample-java-app'
         registryCredential = 'DockerHub-Creds'
     }
-    agent {
-        label master
-    }
+
+    agent none
+
     stages {
         // Build stage
         stage('Build') {
@@ -56,6 +56,9 @@ pipeline {
 
         // Build and Publish Image
         stage('Publish') {
+            agent {
+                label local
+            }
             steps {
                 script {
                     dockerImage = docker.build registry + ":1.0.$BUILD_NUMBER" 
@@ -68,6 +71,9 @@ pipeline {
 
         // Trigger deployment
         stage('Deploy') {
+            agent {
+                label local
+            }
             steps {
                 script {
                     build job:'Pipeline/DeploySpinnakerPipeline' , parameters:[
