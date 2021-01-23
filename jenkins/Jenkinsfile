@@ -57,7 +57,7 @@ pipeline {
         // Build and Publish Image
         stage('Publish') {
             agent {
-                label local
+                label 'local'
             }
             steps {
                 script {
@@ -72,7 +72,7 @@ pipeline {
         // Trigger deployment
         stage('Deploy') {
             agent {
-                label local
+                label 'local'
             }
             steps {
                 script {
