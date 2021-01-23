@@ -56,9 +56,7 @@ pipeline {
 
         // Build and Publish Image
         stage('Publish') {
-            agent {
-                label 'local'
-            }
+            agent none
             steps {
                 script {
                     dockerImage = docker.build registry + ":1.0.$BUILD_NUMBER" 
@@ -71,9 +69,7 @@ pipeline {
 
         // Trigger deployment
         stage('Deploy') {
-            agent {
-                label 'local'
-            }
+            agent none
             steps {
                 script {
                     build job:'Pipeline/DeploySpinnakerPipeline' , parameters:[
