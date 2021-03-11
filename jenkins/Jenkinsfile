@@ -55,6 +55,7 @@ pipeline {
             post {
                 always {
                     junit 'target/surefire-reports/*.xml'
+                    publishCoverage adapters: [jacocoAdapter(mergeToOneReport: true, path: 'target/surefire-reports/*.xml')]
                 }
             }
         }
@@ -96,11 +97,5 @@ pipeline {
         //         }
         //     }            
         // }
-    }
-
-    post {
-        always {
-            publishCoverage adapters: [jacocoAdapter(mergeToOneReport: true, path: '**/*.xml')]
-        }
     }
 }
