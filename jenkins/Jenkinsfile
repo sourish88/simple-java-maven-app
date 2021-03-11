@@ -2,6 +2,7 @@ pipeline {
     environment {
         registry = 'sourish88/sample-java-app'
         registryCredential = 'DockerHub-Creds'
+        DOCKER_HOST = 'tcp://localhost:2375'
     }
 
     agent {
@@ -19,13 +20,6 @@ pipeline {
               command:
               - cat
               tty: true
-              env:
-              - name: POD_IP
-                valueFrom:
-                  fieldRef:
-                    fieldPath: status.podIP
-              - name: DOCKER_HOST
-                value: tcp://localhost:2375
             - name: dind
               image: docker:dind
               securityContext:
@@ -79,7 +73,7 @@ pipeline {
         // Build and Publish Image
         stage('Publish') {
             steps {
-                container('maven') {
+                container('dind') {
                     script {
                         dockerImage = docker.build registry + ":1.0.$BUILD_NUMBER" 
                         docker.withRegistry( '', registryCredential ) { 
