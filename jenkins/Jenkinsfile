@@ -73,17 +73,17 @@ pipeline {
         }
 
         // Trigger deployment
-        stage('Deploy') {
-            agent none
-            steps {
-                script {
-                    build job:'Deployment/DockerDeployPipiline' , parameters:[
-                     string(name: "APP_NAME",  value: "sampleJavaApp"),
-                     string(name: "DOCKER_REPO", value: registry),
-                     string(name: "VERSION_TAG",  value: "1.0.$BUILD_NUMBER")
-                   ]
-                }
-            }            
-        }
+        // stage('Deploy') {
+        //     agent none
+        //     steps {
+        //         script {
+        //             build job:'Deployment/DockerDeployPipiline' , parameters:[
+        //              string(name: "APP_NAME",  value: "sampleJavaApp"),
+        //              string(name: "DOCKER_REPO", value: registry),
+        //              string(name: "VERSION_TAG",  value: "1.0.$BUILD_NUMBER")
+        //            ]
+        //         }
+        //     }            
+        // }
     }
 }
