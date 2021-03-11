@@ -47,12 +47,7 @@ pipeline {
         //Test stage
         stage('Test') {
             // kubernetes agent for build
-            steps[$class: 'JacocoPublisher', 
-            execPattern: 'target/*.exec',
-            classPattern: 'target/classes',
-            sourcePattern: 'src/main/java',
-            exclusionPattern: 'src/test*'
-            ] {
+            steps {
                 container('maven') {
                     sh 'mvn test'
                 }
@@ -61,8 +56,12 @@ pipeline {
                 always {
                     junit 'target/surefire-reports/*.xml'
                     publishCoverage adapters: [jacocoAdapter(mergeToOneReport: true, path: '**/*.xml')]
-                    archiveArtifacts artifacts: '**/*', fingerprint: true
-                }
+                    jacoco( 
+                        execPattern: 'target/*.exec',
+                        classPattern: 'target/classes',
+                        sourcePattern: 'src/main/java',
+                        exclusionPattern: 'src/test*'
+                    )
             }
         }
 
