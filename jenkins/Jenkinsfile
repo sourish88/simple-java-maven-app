@@ -32,7 +32,7 @@ pipeline {
                 mountPath: /var/lib/docker
           volumes:
           - name: dind-storage
-              emptyDir: {}
+            emptyDir: {}
         """.stripIndent()
     }
   }
