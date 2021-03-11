@@ -55,7 +55,6 @@ pipeline {
             post {
                 always {
                     junit 'target/surefire-reports/*.xml'
-                    publishCoverage adapters: [jacocoAdapter(mergeToOneReport: true, path: '**/*.xml')]
                     jacoco( 
                         execPattern: 'target/*.exec',
                         classPattern: 'target/classes',
