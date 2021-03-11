@@ -19,8 +19,11 @@ pipeline {
               command:
               - cat
               tty: true
-            - name: docker-build
               env:
+              - name: POD_IP
+                valueFrom:
+                  fieldRef:
+                    fieldPath: status.podIP
               - name: DOCKER_HOST
                 value: tcp://localhost:2375
             - name: dind
@@ -30,9 +33,9 @@ pipeline {
               volumeMounts:
               - name: dind-storage
                 mountPath: /var/lib/docker
-        volumes:
-        - name: dind-storage
-          emptyDir: {}
+           volumes:
+           - name: dind-storage
+             emptyDir: {}
         """.stripIndent()
     }
   }
@@ -76,7 +79,7 @@ pipeline {
         // Build and Publish Image
         stage('Publish') {
             steps {
-                container('docker-build') {
+                container('maven') {
                     script {
                         dockerImage = docker.build registry + ":1.0.$BUILD_NUMBER" 
                         docker.withRegistry( '', registryCredential ) { 
