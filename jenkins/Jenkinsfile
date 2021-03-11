@@ -28,8 +28,8 @@ pipeline {
         // Build stage
         stage('Build') {
             // kubernetes agent for build
-            container('maven') {
-                steps {
+            steps {
+                container('maven') {
                     sh 'mvn -B -DskipTests clean package'
                 }
             }
@@ -38,14 +38,14 @@ pipeline {
         //Test stage
         stage('Test') {
             // kubernetes agent for build
-            container('maven') {
-                steps {
+            steps {
+                container('maven') {
                     sh 'mvn test'
                 }
-                post {
-                    always {
-                        junit 'target/surefire-reports/*.xml'
-                    }
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
                 }
             }
         }
@@ -53,8 +53,8 @@ pipeline {
         // Deliver stage
         stage('Deliver') {
             // kubernetes agent for build
-            container('maven') {
-                steps {
+            steps {
+                container('maven') {
                     sh './jenkins/scripts/deliver.sh'
                 }
             }
