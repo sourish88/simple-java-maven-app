@@ -9,9 +9,9 @@ pipeline {
     stages {
         // Build stage
         stage('Build') {
-            // Docker agent for build
+            // kubernetes agent for build
             agent {
-                docker {
+                kubernetes {
                     image 'maven:3-alpine'
                     args '-v /root/.m2:/root/.m2'
                 }
@@ -23,9 +23,9 @@ pipeline {
 
         //Test stage
         stage('Test') {
-            // Docker agent for build
+            // kubernetes agent for build
             agent {
-                docker {
+                kubernetes {
                     image 'maven:3-alpine'
                     args '-v /root/.m2:/root/.m2'
                 }
@@ -42,9 +42,9 @@ pipeline {
 
         // Deliver stage
         stage('Deliver') {
-            // Docker agent for build
+            // kubernetes agent for build
             agent {
-                docker {
+                kubernetes {
                     image 'maven:3-alpine'
                     args '-v /root/.m2:/root/.m2'
                 }
