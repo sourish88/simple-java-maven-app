@@ -19,6 +19,11 @@ pipeline {
             command:
             - cat
             tty: true
+          - name: dind
+            image: docker:dind
+            command:
+            - cat
+            tty: true
         """.stripIndent()
     }
   }
@@ -61,12 +66,13 @@ pipeline {
 
         // Build and Publish Image
         stage('Publish') {
-            agent none
             steps {
-                script {
-                    dockerImage = docker.build registry + ":1.0.$BUILD_NUMBER" 
-                    docker.withRegistry( '', registryCredential ) { 
-                        dockerImage.push() 
+                container('dind') {
+                    script {
+                        dockerImage = docker.build registry + ":1.0.$BUILD_NUMBER" 
+                        docker.withRegistry( '', registryCredential ) { 
+                            dockerImage.push() 
+                        }
                     }
                 }
             }            
