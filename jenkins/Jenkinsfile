@@ -2,7 +2,6 @@ pipeline {
     environment {
         registry = 'sourish88/sample-java-app'
         registryCredential = 'DockerHub-Creds'
-        DOCKER_HOST = 'tcp://localhost:2375'
     }
 
     agent {
