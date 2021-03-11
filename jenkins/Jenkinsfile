@@ -1,17 +1,35 @@
 pipeline {
-    agent {
-        docker {
-            image 'maven:3-alpine'
-            args '-v /root/.m2:/root/.m2'
-        }
+    environment {
+        registry = 'sourish88/sample-java-app'
+        registryCredential = 'DockerHub-Creds'
     }
+
+    agent none
+
     stages {
+        // Build stage
         stage('Build') {
+            // Docker agent for build
+            agent {
+                docker {
+                    image 'maven:3-alpine'
+                    args '-v /root/.m2:/root/.m2'
+                }
+            }
             steps {
                 sh 'mvn -B -DskipTests clean package'
             }
         }
+
+        //Test stage
         stage('Test') {
+            // Docker agent for build
+            agent {
+                docker {
+                    image 'maven:3-alpine'
+                    args '-v /root/.m2:/root/.m2'
+                }
+            }
             steps {
                 sh 'mvn test'
             }
@@ -21,10 +39,46 @@ pipeline {
                 }
             }
         }
+
+        // Deliver stage
         stage('Deliver') {
+            // Docker agent for build
+            agent {
+                docker {
+                    image 'maven:3-alpine'
+                    args '-v /root/.m2:/root/.m2'
+                }
+            }
             steps {
                 sh './jenkins/scripts/deliver.sh'
             }
+        }
+
+        // Build and Publish Image
+        stage('Publish') {
+            agent none
+            steps {
+                script {
+                    dockerImage = docker.build registry + ":1.0.$BUILD_NUMBER" 
+                    docker.withRegistry( '', registryCredential ) { 
+                        dockerImage.push() 
+                    }
+                }
+            }            
+        }
+
+        // Trigger deployment
+        stage('Deploy') {
+            agent none
+            steps {
+                script {
+                    build job:'Deployment/DockerDeployPipiline' , parameters:[
+                     string(name: "APP_NAME",  value: "sampleJavaApp"),
+                     string(name: "DOCKER_REPO", value: registry),
+                     string(name: "VERSION_TAG",  value: "1.0.$BUILD_NUMBER")
+                   ]
+                }
+            }            
         }
     }
 }
