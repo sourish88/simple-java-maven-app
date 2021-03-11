@@ -4,38 +4,48 @@ pipeline {
         registryCredential = 'DockerHub-Creds'
     }
 
-    agent none
+    agent {
+    kubernetes {
+      yaml """\
+        apiVersion: v1
+        kind: Pod
+        metadata:
+          labels:
+            job: ${JOB_BASE_NAME}
+        spec:
+          containers:
+          - name: maven
+            image: maven:3-alpine
+            args: ['-v', '/root/.m2:/root/.m2']
+            command:
+            - cat
+            tty: true
+        """.stripIndent()
+    }
+  }
 
     stages {
         // Build stage
         stage('Build') {
             // kubernetes agent for build
-            agent {
-                kubernetes {
-                    image 'maven:3-alpine'
-                    args '-v /root/.m2:/root/.m2'
+            container('maven') {
+                steps {
+                    sh 'mvn -B -DskipTests clean package'
                 }
-            }
-            steps {
-                sh 'mvn -B -DskipTests clean package'
             }
         }
 
         //Test stage
         stage('Test') {
             // kubernetes agent for build
-            agent {
-                kubernetes {
-                    image 'maven:3-alpine'
-                    args '-v /root/.m2:/root/.m2'
+            container('maven') {
+                steps {
+                    sh 'mvn test'
                 }
-            }
-            steps {
-                sh 'mvn test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
+                post {
+                    always {
+                        junit 'target/surefire-reports/*.xml'
+                    }
                 }
             }
         }
@@ -43,14 +53,10 @@ pipeline {
         // Deliver stage
         stage('Deliver') {
             // kubernetes agent for build
-            agent {
-                kubernetes {
-                    image 'maven:3-alpine'
-                    args '-v /root/.m2:/root/.m2'
+            container('maven') {
+                steps {
+                    sh './jenkins/scripts/deliver.sh'
                 }
-            }
-            steps {
-                sh './jenkins/scripts/deliver.sh'
             }
         }
 
